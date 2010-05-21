@@ -8,10 +8,10 @@ module ActiveRecord
     module ClassMethods
       def rating_for(element, options = {})
         has_one :rateable_element, 
-        :foreign_key => :element_id, 
-        :dependent => :destroy, 
-        :as => "rating_for_#{element.to_s}", 
-        :conditions => ["element = ?", "#{self.name}.#{element}"]
+                :foreign_key => :element_id, 
+                :dependent => :destroy, 
+                :as => "rating_for_#{element}", 
+                :conditions => {:element_attribute => element}
 
         include ActiveRecord::RatingFor::InstanceMethods
         extend ActiveRecord::RatingFor::SingletonMethods
@@ -20,8 +20,8 @@ module ActiveRecord
 
     module SingletonMethods
       # Find all objects rated by score.
-      def find_average_rating_for(element, value)
-        find(:all, :conditions => ["element = ? AND avg_rating", "#{self.name}.#{element}", value])
+      def find_with_average_rating_of(element, value)
+        find :all, :conditions => {:element_attribute => element, :avg_rating => value}, :joins => [:rateable_element]
       end
     end
 
