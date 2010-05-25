@@ -5,6 +5,7 @@ require 'active_record/fixtures'
 
 require 'test/unit'
 require File.dirname(__FILE__) + '/../init'
+require File.dirname(__FILE__) + '/../lib/generators/templates/migration'
 
 ActiveRecord::Base.establish_connection({
   :adapter => 'sqlite3', :database => ':memory:'
@@ -28,3 +29,5 @@ ActiveRecord::Schema.define do
     t.timestamps
   end
 end
+
+RatingForMigration.up

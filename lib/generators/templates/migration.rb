@@ -4,9 +4,9 @@ class RatingForMigration < ActiveRecord::Migration
     	t.string  :element_type
     	t.string  :element_attribute
     	t.integer :element_id
-    	t.integer :avg_rating
-    	t.integer :total_rating
-    	t.integer :ratings_count
+    	t.integer :avg_rating, :default => 0
+    	t.integer :total_rating, :default => 0
+    	t.integer :ratings_count, :default => 0
     	
       t.timestamps
     end

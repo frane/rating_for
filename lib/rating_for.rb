@@ -7,55 +7,41 @@ module ActiveRecord
 
     module ClassMethods
       def rating_for(element, options = {})
-        has_one :rateable_element, 
-                :foreign_key => :element_id, 
+        has_one "rating_for_#{element}", 
                 :dependent => :destroy, 
-                :as => "rating_for_#{element}", 
-                :conditions => {:element_attribute => element}
+                :as => :element,
+                :conditions => {:element_attribute => element.to_s}
+        
+        define_method "rating_for_#{element}" do
+          rateable_element = instance_variable_get("@_rating_for_#{element}")
+          
+          if rateable_element.nil?
+            rateable_element = RateableElement.find_by_element_id(self.id, :conditions => {:element_type => self.class.name, :element_attribute => element.to_s})
+            rateable_element = RateableElement.new(:element_id => self.id, :element_type => self.class.name, :element_attribute => element.to_s) if rateable_element.nil?
+            instance_variable_set("@_rating_for_#{element}", rateable_element)
+          end
+          
+          rateable_element
+        end
 
-        include ActiveRecord::RatingFor::InstanceMethods
+        (class << self; self; end).module_eval do
+          define_method "find_for_#{element}_with_average_rating_of" do |value|
+            self.find_with_average_rating_of(element.to_s, value)
+          end
+        end
+        
         extend ActiveRecord::RatingFor::SingletonMethods
       end
     end
 
     module SingletonMethods
-      # Find all objects rated by score.
+      # TODO Check if this is DBMS-agnostic
       def find_with_average_rating_of(element, value)
-        find :all, :conditions => {:element_attribute => element, :avg_rating => value}, :joins => [:rateable_element]
+        find :all, :conditions => "rateable_elements.element_attribute = \"#{element}\" AND rateable_elements.avg_rating = \"#{value}\"", 
+             :joins => "INNER JOIN rateable_elements ON rateable_elements.element_id = #{self.name.parameterize.pluralize}.id"
       end
-    end
-
-    module InstanceMethods
-      # Rates the object by a given score. A user object can be passed to the method.
-      def rate_it( score, user_id )
-        return unless score
-        rate = Rate.find_or_create_by_score( score.to_i )
-        rate.user_id = user_id
-        rates << rate
-      end
-
-      # Calculates the average rating. Calculation based on the already given scores.
-      def average_rating
-        return 0 if rates.empty?
-        ( rates.inject(0){|total, rate| total += rate.score }.to_f / rates.size )
-      end
-
-      # Rounds the average rating value.
-      def average_rating_round
-        average_rating.round
-      end
-
-      # Returns the average rating in percent. The maximal score must be provided	or the default value (5) will be used.
-      # TODO make maximum_rating automatically calculated.
-      def average_rating_percent( maximum_rating = 5 )
-        f = 100 / maximum_rating.to_f
-        average_rating * f
-      end
-
-      # Checks wheter a user rated the object or not.
-      def rated_by?( user )
-        ratings.detect {|r| r.user_id == user.id }
-      end
+      
+      
     end
 
   end
