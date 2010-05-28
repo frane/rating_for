@@ -26,6 +26,7 @@ class RatingForTest < ActiveRecord::TestCase
   test "add ratings" do
     hotel = Hotel.find(1)
     user = User.find(1)
+    user2 = User.find(2)
     newspaper = Newspaper.find(1)
     
     assert hotel.rating_for_quality
@@ -36,11 +37,22 @@ class RatingForTest < ActiveRecord::TestCase
     hotel.rating_for_quality << r
     assert_equal hotel.rating_for_quality.avg_rating, hotel.rating_for_quality.total_rating
     
+    hotel.rating_for_quality.add(10, user2)
+    assert_equal hotel.rating_for_quality.avg_rating, 6
+    
+    hotel.rating_for_quality.add(10)
+    assert_equal hotel.rating_for_quality.avg_rating.round, 7
+    
+    assert_equal hotel.rating_for_quality.ratings_count, 3
+    assert hotel.rating_for_quality.rated_by?(user2)
+    
     hotel.rating_for_service.add(10, user)
-    assert_equal Hotel.find_for_service_with_average_rating_of(10).first, hotel
+    assert_equal Hotel.find_where_service_has_average_rating_of(10).first, hotel
     
     assert hotel.rating_for_service.rated_by?(user)
     assert_equal hotel.rating_for_service.rated_by?(newspaper), false
+    
+    p Hotel.find_where_quality_was_rated_by user
   end
   
   test "remove ratings" do
