@@ -41,8 +41,9 @@ class RateableElement < ActiveRecord::Base
   end
   
   def remove_by_rater(rater)
-    rating = self.ratings.find_by_rater(rater)
-    self.remove_rating(rating)
+    self.ratings.find_all_by_rater_id(rater.id, :conditions => {:rater_type => rater.class.name}).each do |rating|
+      self.remove_rating(rating)
+    end
   end
   
   def clear
@@ -59,11 +60,18 @@ class RateableElement < ActiveRecord::Base
   end
   
   def recalculate_rating
+    self.recalculate_rating_without([])
+  end
+  
+  def recalculate_rating_without(ratings)
+    return unless (ratings.is_a? Rating or ratings.is_a? Array)
+
     self.total_rating = 0
     self.ratings_count = 0
     self.avg_rating = 0
-    self.ratings.each do |r|
-      self.total_rating += self.rating.value
+    ratings = self.ratings - [ratings].compact.flatten
+    ratings.each do |r|
+      self.total_rating += r.value
       self.ratings_count += 1 
     end
     self.avg_rating = self.total_rating.to_f / self.ratings_count
