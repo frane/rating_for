@@ -1,4 +1,4 @@
-class RatingForMigration < ActiveRecord::Migration
+class CreateRatingForTables < ActiveRecord::Migration
   def self.up
     create_table :rateable_elements do |t|
     	t.string  :element_type
