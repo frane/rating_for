@@ -10,7 +10,7 @@ class RateableElement < ActiveRecord::Base
     self.avg_rating
   end
   
-  def averge_rating=(value)
+  def average_rating=(value)
     self.avg_rating = value
   end
   
