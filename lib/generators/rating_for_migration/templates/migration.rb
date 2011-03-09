@@ -22,7 +22,7 @@ class CreateRatingForTables < ActiveRecord::Migration
     
     add_index :ratings, :rateable_element_id
     add_index :ratings, [:rater_type, :rater_id]
-    add_index :rateable_elements, [:element_type, :element_attribute, :element_id]
+    add_index :rateable_elements, [:element_type, :element_attribute, :element_id], :name => :rateable_elements_index
   end
   
   def self.down
