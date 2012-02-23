@@ -1,5 +1,0 @@
-Description:
-    Generates a migration file that contains all tables that are needed by the rating_for plugin.
-
-Example:
-    rails generate rating_for_migration

@@ -1,20 +1,25 @@
 # rating_for
 
-## A context-based rating plugin for Rails
-This plugin allows you to add multiple different rating criteria to your ActiveRecord based model. It provides column-caching, a polymorphic association for raters and works with both Rails 2 and 3.
+## A context-based rating gem for Rails
+This gem allows you to add multiple different rating criteria to your ActiveRecord based model. It provides column-caching, a polymorphic association for raters and works with both Rails 2 and 3.
 
-It's a pure model plugin and does not provide any view methods. Prototype, jQuery and company provide all excellent method an plugins for this.
+It's a pure model gem and does not provide any view methods. Prototype, jQuery and company provide all excellent methods and plugins for this.
 
 ## Installation
 Rails 2:
 
-    script/plugin install git://github.com/frane/rating_for.git
-    script/generate rating_for_migration
+Not supported anymore.
 
 Rails 3:
     
-    rails plugin install git://github.com/frane/rating_for.git
-    rails g rating_for_migration
+Add the gem to your Gemfile:
+    
+    gem 'rating_for'
+    
+Generate the migration to create the tables and run it:
+    
+    rails g rating_for:migration
+    rake db:migrate
 
 
 ## Example
@@ -70,4 +75,5 @@ Search over ratings is also possible:
  * Add more examples
 
 ## License
-Copyright (c) 2010 [Frane Bandov](http://github.com/frane), released under the MIT license
+Copyright (c) 2012 [Frane Bandov](http://github.com/frane), released under the MIT license
+
