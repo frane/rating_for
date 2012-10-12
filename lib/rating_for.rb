@@ -13,6 +13,7 @@ module RatingFor
       has_one "rating_for_#{element}", 
               :dependent => :destroy, 
               :as => :element,
+              :class_name => 'RateableElement',
               :conditions => {:element_attribute => element.to_s}
       
       define_method "rating_for_#{element}" do

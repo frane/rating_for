@@ -1,4 +1,4 @@
-require 'test_helper'
+require_relative 'test_helper.rb'
 
 class User < ActiveRecord::Base
 end
@@ -99,7 +99,7 @@ class RatingForTest < ActiveRecord::TestCase
     assert hotel.rating_for_quality.avg_rating != new_avg_rating
     assert_equal avg_rating, hotel.rating_for_quality.avg_rating
     
-    # new objects get their data fresh out of the database - this data is corect
+    # new objects get their data fresh out of the database - this data is correct
     h2 = Hotel.find(1)
     assert_equal h.rating_for_quality.avg_rating, h2.rating_for_quality.avg_rating
     assert hotel.rating_for_quality.avg_rating != h2.rating_for_quality.avg_rating
@@ -125,5 +125,17 @@ class RatingForTest < ActiveRecord::TestCase
     hotel.rating_for_quality.remove_by_rater user
     assert avg_rating != hotel.rating_for_quality.avg_rating
     assert_equal new_avg_rating, hotel.rating_for_quality.avg_rating
+  end
+
+  test "remove objects" do
+    hotel = Hotel.find(1)
+    hotel.rating_for_service.add 10
+
+    r = RateableElement.where(:element_type => 'Hotel', :element_attribute => 'service', :element_id => 1)
+    assert_equal 1, r.count
+
+    hotel.destroy
+    r = RateableElement.where(:element_type => 'Hotel', :element_attribute => 'service', :element_id => 1)
+    assert_equal 0, r.count
   end
 end
