@@ -1,5 +1,5 @@
 class RateableElement < ActiveRecord::Base
-  has_many :ratings, :dependent => :destroy
+  has_many :ratings, :dependent => :destroy, :inverse_of => :rateable_element
   belongs_to :element, :polymorphic => true
   before_save :recalculate_avg_rating
   

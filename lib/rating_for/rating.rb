@@ -1,5 +1,5 @@
 class Rating < ActiveRecord::Base
-  belongs_to :rateable_element
+  belongs_to :rateable_element, :inverse_of => :ratings, :touch => true
   belongs_to :rater, :polymorphic => true
 
   validates_associated :rateable_element
@@ -32,6 +32,7 @@ class Rating < ActiveRecord::Base
   
   def update_rateable_element
     self.rateable_element.recalculate_rating
+    p 'a12'
   end
   
 end
