@@ -10,7 +10,7 @@ module RatingFor
 
   module ClassMethods
     def rating_for(element, options = {})
-      has_one "rating_for_#{element}", 
+      has_one "rating_for_#{element}".to_sym,
               :dependent => :destroy, 
               :as => :element,
               :class_name => 'RateableElement',
