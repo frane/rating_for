@@ -32,7 +32,6 @@ class Rating < ActiveRecord::Base
   
   def update_rateable_element
     self.rateable_element.recalculate_rating
-    p 'a12'
   end
   
 end
